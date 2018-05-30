@@ -1,0 +1,34 @@
+<div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <h1 class="headline">Snapterest</h1>
+    </div>
+  </div>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 inputContainer">
+        <input class="fields form-control" type="text" placeholder="username" formControlName="username" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <input class="fields form-control" type="password" placeholder="password"
+        formControlName="password" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <button class="btn btn-primary">Log In</button>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <a [routerLink]= "['/sign-up']">
+        <button class="btn btn-primary">
+          Sign Up
+        </button>
+      </a>
+    </div>
+  </div>
+</div>

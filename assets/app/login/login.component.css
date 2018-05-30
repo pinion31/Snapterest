@@ -1,0 +1,13 @@
+.fields {
+  margin:10px auto;
+  width: 20%;
+
+}
+
+.inputContainer:nth-child(1) {
+  margin-top: 100px
+}
+
+.headline {
+  margin-top: 100px;
+}
