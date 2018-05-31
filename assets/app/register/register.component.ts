@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from './user.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UsersService } from '../services/users.service';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class RegisterComponent implements OnInit {
   registerForm:FormGroup;
 
-  constructor() { }
+  constructor(private usersService:UsersService) { }
 
   ngOnInit() {
     this.registerForm = new FormGroup({
@@ -23,7 +24,9 @@ export class RegisterComponent implements OnInit {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      console.log('form', this.registerForm);
+      this.usersService.addNewUser(this.registerForm.value);
+
+      //console.log('form', this.usersService.getCurrentUser());
     } else {
       console.log('invalid form');
     }
