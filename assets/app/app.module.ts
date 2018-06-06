@@ -7,11 +7,13 @@ import { LoginComponent } from './login/login.component';
 import { MainNavBarComponent } from './main-nav-bar/main-nav-bar.component';
 import { UserComponent } from './user/user.component';
 import { RegisterComponent } from './register/register.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { RouterModule, Routes } from '@angular/router';
 import { UsersService } from './services/users.service';
 
 const routes: Routes = [
   { path: '', component: LoginComponent},
+  { path: 'welcome', component: DashboardComponent }
   { path: 'sign-up', component: RegisterComponent }
 ];
 
@@ -22,6 +24,7 @@ const routes: Routes = [
     MainNavBarComponent,
     UserComponent,
     RegisterComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,

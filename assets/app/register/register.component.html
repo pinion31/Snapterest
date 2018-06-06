@@ -17,6 +17,19 @@
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <input
           class="fields form-control"
+          type="password"
+          placeholder="password"
+          formControlName="password"
+        >
+      </div>
+      <p style="margin-left: 20px" *ngIf="!registerForm.get('password').valid && registerForm.get('password').touched">
+        Please enter a password.
+      </p>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <input
+          class="fields form-control"
           type="email"
           placeholder="email"
           email
