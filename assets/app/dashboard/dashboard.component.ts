@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../services/users.service';
+import { Card } from '../models/card.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,13 +9,13 @@ import { UsersService } from '../services/users.service';
 })
 export class DashboardComponent implements OnInit {
   currentUser: string;
+  currentUserCards: Array<Card>;
 
   constructor(private usersService: UsersService) { }
 
   ngOnInit() {
     this.currentUser = this.usersService.getCurrentUser();
-
-    //console.log(this.userService.getCurrentUser());
+    this.currentUserCards = this.usersService.getUserCards();
   }
 
 }

@@ -1,0 +1,52 @@
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">New Snap Card</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup] = "cardForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <input
+            [ngStyle]="{'margin':'10px auto'}"
+            class="fields form-control"
+            type="text"
+            placeholder="title"
+            formControlName="title"
+          >
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <input
+            [ngStyle]="{'margin':'10px auto'}"
+            class="fields form-control"
+            type="text"
+            placeholder="link to picture"
+            formControlName="imageLink"
+          >
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <textarea
+            [ngStyle]="{'margin':'10px auto'}"
+            class="fields form-control"
+            type="text"
+            placeholder="Enter description here"
+            formControlName="description"
+          >
+          </textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="onSubmit(); c('Close click')">Add</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+  </div>
+</ng-template>
+
+<button class="btn btn-lg btn-outline-primary" (click)="open(content)"> + Add New Snap Card</button>

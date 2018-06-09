@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Card = require('../models/Card');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
@@ -7,6 +8,7 @@ router.post('/login', (req,res) => {
   const {email, password} = req.body;
 
   User.findOne({email})
+    .populate('cards')
     .then(user => {
       if (user) {
         bcrypt.compare(password, user.password, (err, match) => {
@@ -41,6 +43,7 @@ router.post('/add-user', (req,res) => {
                 email: email.toLowerCase(),
                 city,
                 state,
+                cards: [],
               });
 
               newUser.save((err,savedUser) => {
@@ -55,6 +58,33 @@ router.post('/add-user', (req,res) => {
 
 });
 
+router.post('/add-card', (req,res) => {
+  const { imageLink, title, owner, description } = req.body;
+
+  const card = new Card({
+    imageLink,
+    title,
+    owner,
+    description,
+  })
+
+  User.update({email: owner}, {$push: { cards: card }}).then((err, user) => {
+
+  });
+
+  card.save((err,savedCard) => {
+    if (err) {throw err;}
+    res.json(savedCard);
+  });
+});
+
+router.get('/recent-cards', (req,res) => {
+  Card.find({})
+    .limit(20)
+    .then(cards => {
+      res.json({all: cards});
+    })
+});
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });

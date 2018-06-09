@@ -10,6 +10,8 @@ import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RouterModule, Routes } from '@angular/router';
 import { UsersService } from './services/users.service';
+import { ModalBasicComponent } from './modal-basic/modal-basic.component';
+import {NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 const routes: Routes = [
   { path: '', component: LoginComponent},
@@ -25,11 +27,13 @@ const routes: Routes = [
     UserComponent,
     RegisterComponent,
     DashboardComponent,
+    ModalBasicComponent,
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes)
+    NgbModule.forRoot(),
     HttpClientModule,
   ],
   providers: [UsersService],

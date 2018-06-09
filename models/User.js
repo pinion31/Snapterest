@@ -8,6 +8,10 @@ const UserSchema = new Schema(
     email: String,
     city: String,
     state: String,
+    cards: [{
+      type: Schema.Types.ObjectId,
+      ref: 'cards'
+    }]
   }
 );
 
