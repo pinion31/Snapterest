@@ -12,11 +12,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { UsersService } from './services/users.service';
 import { ModalBasicComponent } from './modal-basic/modal-basic.component';
 import {NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { BrowserComponent } from './browser/browser.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent},
-  { path: 'welcome', component: DashboardComponent }
-  { path: 'sign-up', component: RegisterComponent }
+  { path: 'welcome', component: DashboardComponent },
+  { path: 'sign-up', component: RegisterComponent },
+  { path: 'recent-snapcards', component: BrowserComponent},
 ];
 
 @NgModule({
@@ -28,6 +30,7 @@ const routes: Routes = [
     RegisterComponent,
     DashboardComponent,
     ModalBasicComponent,
+    BrowserComponent,
   ],
   imports: [
     BrowserModule,

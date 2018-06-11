@@ -1,6 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs/Subject';
 import { Router } from '@angular/router';
 import { Card } from '../models/card.model';
 
@@ -9,6 +10,7 @@ export class UsersService {
   currentUser: string;
   currentEmail: string;
   userCards = [];
+  recentCards:Subject<Array> = new Subject<Array>();
 
   constructor(private http:HttpClient, private router:Router) {
 
@@ -23,7 +25,11 @@ export class UsersService {
 
   }
 
-  getUserCards() {
+  getRecentCards():Observable<Array> {
+    return this.recentCards;
+  }
+
+  getUserCards():Array<Cards> {
     /*this.http
       .get('login', JSON.stringify({
         email,
@@ -93,5 +99,21 @@ export class UsersService {
             const { username, email, state, city, password } = data;
             this.currentUser = username;
         });
+  }
+
+  getAllCards():void {
+    this.http
+      .get('/recent-cards')
+      .subscribe(returnedCards => {
+        const allCards:Array<Card> = [];
+
+        returnedCards.all.map(card => {
+          allCards.push(new Card(card.title, card.imageLink, card.description));
+        });
+        //this.recentCards =
+        this.recentCards.next(allCards);
+        console.log(allCards);
+        console.log(this.recentCards);
+      });
   }
 }
