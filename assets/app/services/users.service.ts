@@ -9,7 +9,8 @@ import { Card } from '../models/card.model';
 export class UsersService {
   currentUser: string;
   currentEmail: string;
-  userCards = [];
+  loggedIn:Subject<boolean> = new Subject<boolean>();
+  userCards:Array<Card> = [];
   recentCards:Subject<Array> = new Subject<Array>();
 
   constructor(private http:HttpClient, private router:Router) {
@@ -29,7 +30,11 @@ export class UsersService {
     return this.recentCards;
   }
 
-  getUserCards():Array<Cards> {
+  logOut() {
+    this.loggedIn.next(false);
+    this.router.navigateByUrl('/');
+  }
+  getUserCards():Array<Card> {
     /*this.http
       .get('login', JSON.stringify({
         email,
@@ -56,10 +61,11 @@ export class UsersService {
         cards.map(card => {
           cardModels.push(new Card(card.title, card.imageLink, card.description));
         });
-
+        this.loggedIn.next(true);
         this.currentUser = username;
         this.currentEmail = email;
         this.userCards = cardModels;
+
         this.router.navigateByUrl('/welcome');
       });
   }
@@ -110,10 +116,7 @@ export class UsersService {
         returnedCards.all.map(card => {
           allCards.push(new Card(card.title, card.imageLink, card.description));
         });
-        //this.recentCards =
         this.recentCards.next(allCards);
-        console.log(allCards);
-        console.log(this.recentCards);
       });
   }
 }

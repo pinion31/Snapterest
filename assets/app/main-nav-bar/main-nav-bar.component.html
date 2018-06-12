@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav *ngIf="loggedIn" class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home</a>
+                <a [routerLink]= "['/welcome']" class="nav-link" href="#">Home</a>
             </li>
             <li class="nav-item">
                 <a [routerLink]= "['/recent-snapcards']" class="nav-link" href="#">Recent SnapCards</a>
@@ -11,8 +11,8 @@
     </div>
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
+            <li class="nav-item" (click)="logOut()">
+                <a class="nav-link">Logout</a>
             </li>
         </ul>
     </div>

@@ -16,6 +16,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.usersService.getCurrentUser();
     this.currentUserCards = this.usersService.getUserCards();
+    //this.usersService.getAllCards();
   }
 
 }

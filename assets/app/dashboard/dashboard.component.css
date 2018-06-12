@@ -1,3 +1,17 @@
 .fields {
   margin:10px auto;
 }
+
+.container {
+  margin-top: 100px;
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
+  grid-template-rows: 250px;
+  grid-column-gap: 30px;
+  grid-row-gap: 30px;
+}
+
+.headline {
+  margin-top: 70px;
+}

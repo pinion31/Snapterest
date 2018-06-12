@@ -5,7 +5,8 @@ import { UsersService } from '../services/users.service';
 
 @Component({
   selector: 'ngbd-modal-basic',
-  templateUrl: './modal-basic.component.html'
+  templateUrl: './modal-basic.component.html',
+  styleUrls: ['./modal-basic.component.css']
 })
 export class ModalBasicComponent implements OnInit  {
   closeResult: string;

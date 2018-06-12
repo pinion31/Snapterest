@@ -17,13 +17,6 @@ export class BrowserComponent implements OnInit {
       this.recentUserCards = newcards;
     });
     this.usersService.getAllCards();
-
-    /*this.recentUserCards = this.usersService.getRecentCards();
-    console.log('recentUserCards', this.recentUserCards);
-    this.usersService.getAllCards().subscribe(cards => {
-      this.recentUserCards = this.usersService.getRecentCards();
-      console.log('recentUserCards2', this.recentUserCards);
-    });*/
   }
 
 }

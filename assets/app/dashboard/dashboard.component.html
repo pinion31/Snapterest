@@ -1,12 +1,12 @@
-<div class="container">
+<div>
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <h1 class="headline">Welcome, {{currentUser}}</h1>
     </div>
   </div>
-  <div class="row">
-    <div class="col-10 col-sm-5 col-md-5 col-lg-3 offset-2 offset-sm-1 offset-md-1 offset-lg-1" *ngFor="let card of currentUserCards">
-      <div class="card" style="width: 13rem; min-height: 250px">
+  <div class="container">
+    <div *ngFor="let card of currentUserCards">
+      <div class="card" style="width: 13rem; min-height: 250px; max-height: 250px;">
         <img *ngIf="card.imageLink" class="card-img-top" style="max-height:150px; max-width:150px; margin: 10px auto"src="{{card.imageLink}}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">{{card.title}}</h5>
