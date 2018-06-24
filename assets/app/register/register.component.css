@@ -3,6 +3,16 @@
 
 }
 
-.sign-up {
-  margin-top: 20px;
+.button {
+  background-color: palevioletred;
+  border-color: palevioletred;
+  color:white;
+  margin-top:20px;
+}
+
+.headline {
+  padding-top: 50px;
+  margin-bottom: 50px;
+  color:white;
+  font-family: 'Roboto', sans-serif;
 }

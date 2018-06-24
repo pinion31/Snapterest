@@ -7,3 +7,42 @@
   grid-column-gap: 30px;
   grid-row-gap: 30px;
 }
+
+.like {
+  position: absolute;
+  left:147px;
+  top:226px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  cursor: pointer;
+  color:blue;
+}
+
+.likeThumb {
+  width: 25px;
+  position:
+  absolute;
+  top:220px;
+  left:153px;
+  transform: scaleX(-1);color:blue;
+}
+
+.liked {
+  width:98px;
+  position:
+  absolute;
+  left:85px;
+  top:228px;
+  font-size: .75rem;
+  color:blue;
+}
+
+.likedThumb {
+  width: 25px;
+  position:
+  absolute;
+  top:220px;
+  left:64px;
+  transform: scaleX(-1);
+}
+

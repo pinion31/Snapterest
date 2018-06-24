@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from './user.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UsersService } from '../services/users.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { UsersService } from '../services/users.service';
 export class RegisterComponent implements OnInit {
   registerForm:FormGroup;
 
-  constructor(private usersService:UsersService) { }
+  constructor(private usersService:UsersService, private router:Router) { }
 
   ngOnInit() {
     this.registerForm = new FormGroup({
@@ -26,11 +27,13 @@ export class RegisterComponent implements OnInit {
   onSubmit() {
     if (this.registerForm.valid) {
       this.usersService.addNewUser(this.registerForm.value);
-
-      //console.log('form', this.usersService.getCurrentUser());
     } else {
       console.log('invalid form');
     }
 
+  }
+
+  backToLogin() {
+    this.router.navigateByUrl('/');
   }
 }

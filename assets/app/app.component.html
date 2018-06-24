@@ -1,5 +1,8 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
+<div class="sky" style="text-align:center">
+  <div *ngFor="let star of stars;let num = index">
+      <img src="star.svg" [ngStyle]="getRandomStar()">
+  </div>
   <app-main-nav-bar></app-main-nav-bar>
   <router-outlet></router-outlet>
 </div>

@@ -12,6 +12,105 @@
   grid-row-gap: 30px;
 }
 
+.card-title {
+  font-weight: bold;
+}
 .headline {
   margin-top: 70px;
+  color:white;
+  font-family: 'Roboto', sans-serif;
+}
+
+ /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc; /* gray background */
+  -webkit-transition: .4s;
+  transition: .4s; /* lenght of animation */
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+/* if input is checked then slider background color changed to blue via slider class*/
+input:checked + .slider {
+  background-color: #007bff;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #007bff;
+}
+
+/* if input is checked then move object with slider class 26px to right*/
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.toggle {
+  transform: scale(.7);
+  position: absolute;
+  top: 210px;
+  left: -5px;
+}
+
+.public {
+  left:75px;
+  position: absolute;
+  font-size: 1.25rem;
+  top:8px;
+  font-weight: bold;
+}
+
+.like {
+  position: absolute;
+  left:147px;
+  top:226px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  color:blue;
+}
+
+.likeThumb {
+  width: 25px;
+  position:
+  absolute;
+  top:220px;
+  left:152px;
+  transform: scaleX(-1);color:blue;
 }

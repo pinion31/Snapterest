@@ -9,12 +9,18 @@ import { Card } from '../models/card.model';
 export class UsersService {
   currentUser: string;
   currentEmail: string;
+  errorMessage:Object<any> = {error:''},
   loggedIn:Subject<boolean> = new Subject<boolean>();
   userCards:Array<Card> = [];
+  likedCards:Array<string> = [];
   recentCards:Subject<Array> = new Subject<Array>();
 
   constructor(private http:HttpClient, private router:Router) {
 
+  }
+
+  getErrorMessage():Object {
+    return this.errorMessage;
   }
 
   getCurrentUser():string {
@@ -35,11 +41,6 @@ export class UsersService {
     this.router.navigateByUrl('/');
   }
   getUserCards():Array<Card> {
-    /*this.http
-      .get('login', JSON.stringify({
-        email,
-        password,
-      }), {*/
     return this.userCards;
   }
 
@@ -47,26 +48,31 @@ export class UsersService {
     const {email, password} = user;
     this.http
       .post('login', JSON.stringify({
-        email,
+        username: email,
         password,
       }), {
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
         })
       }).subscribe(result => {
-        console.log('result is', result);
-        const { username, email, cards } = result.user;
-        const cardModels = [];
+        if (result.user) {
+          const { username, email, cards, cardsLiked } = result.user;
+          const cardModels = [];
 
-        cards.map(card => {
-          cardModels.push(new Card(card.title, card.imageLink, card.description));
-        });
-        this.loggedIn.next(true);
-        this.currentUser = username;
-        this.currentEmail = email;
-        this.userCards = cardModels;
+          cards.map(card => {
+            cardModels.push(new Card(card.title, card.imageLink, card.description, card.likes, card.id, card.isPublic));
+          });
+          this.loggedIn.next(true);
+          this.currentUser = username;
+          this.currentEmail = email;
+          this.userCards = cardModels;
+          this.likedCards = cardsLiked;
 
-        this.router.navigateByUrl('/welcome');
+          this.router.navigateByUrl('/welcome');
+        } else {
+          //invalid username or password
+          this.errorMessage.error = result.error;
+        }
       });
   }
 
@@ -83,9 +89,14 @@ export class UsersService {
             'Content-Type': 'application/json'
           })
         }).subscribe(data => {
-            const { title, description, imageLink } = data;
-            this.userCards.push(new Card(title, imageLink, description));
+            const { title, description, imageLink, id } = data;
+            this.userCards.push(new Card(title, imageLink, description, 0, id));
         });
+  }
+
+  likeCard(id:string):void {
+    this.likedCards.push(id);
+    console.log('this.likeCards', this.likedCards);
   }
 
   addNewUser(user:Object):void {
@@ -107,16 +118,37 @@ export class UsersService {
         });
   }
 
+  // get recent cards from all users
   getAllCards():void {
     this.http
-      .get('/recent-cards')
+      .get(`/recent-cards/${this.currentEmail}`)
       .subscribe(returnedCards => {
         const allCards:Array<Card> = [];
 
         returnedCards.all.map(card => {
-          allCards.push(new Card(card.title, card.imageLink, card.description));
+          allCards.push(new Card(card.title, card.imageLink, card.description, card.likes, card.id, card.isPublic));
         });
         this.recentCards.next(allCards);
       });
+  }
+
+  toggleCardPublic(id:string) {
+    this.http
+      .post('/toggle-card-public', JSON.stringify({
+          id
+        }), {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json'
+          })
+        }).subscribe(data => {
+            const { isPublic } = data;
+            const updatedCards = this.recentCards.map(card => {
+              if (card.is === id) {
+                card.isPublic = isPublic;
+              }
+            });
+            console.log('recentCards', this.recentCards);
+            this.recentCards = updatedCards;
+        });
   }
 }

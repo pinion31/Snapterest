@@ -8,6 +8,7 @@ const UserSchema = new Schema(
     email: String,
     city: String,
     state: String,
+    cardsLiked: Array,
     cards: [{
       type: Schema.Types.ObjectId,
       ref: 'cards'

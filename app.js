@@ -5,11 +5,12 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const compression = require('compression');
 
 var appRoutes = require('./routes/app');
 
 const app = express();
-
+app.use(compression());
 mongoose.connect('mongodb://localhost/local');
 //mongoose.connect(process.env.MONGOLAB_URI);
 mongoose.Promise = global.Promise;

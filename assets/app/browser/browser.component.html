@@ -1,11 +1,22 @@
 <div>
   <div class="container">
-    <div *ngFor="let card of recentUserCards">
-      <div class="card" style="width: 13rem; min-height: 250px">
+    <div *ngFor="let card of recentUserCards; let num = index">
+      <div *ngIf="card.isPublic" class="card" style="width: 13rem; min-height: 250px">
         <img *ngIf="card.imageLink" class="card-img-top" style="max-height:150px; max-width:150px; margin: 10px auto"src="{{card.imageLink}}" alt="Card image cap">
-        <div class="card-body">
+        <div class="card-body" style="padding-bottom: 7px;">
           <h5 class="card-title">{{card.title}}</h5>
           <p class="card-text">{{card.description}}</p>
+          <div *ngIf="!getLikes(card.id)">
+            <p class="like" (click)="likeSnapCard(card.id, num)">Like
+            </p>
+            <img class="likeThumb" src="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/svgs/fi-like.svg" alt="likeThumb" >
+          </div>
+          <div *ngIf="getLikes(card.id)">
+            <p class="liked">You Liked This
+            </p>
+            <img class="likedThumb" src="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/svgs/fi-like.svg" alt="likeThumb" >
+          </div>
+          <p class="card-text like" style="position: absolute; left:181px; bottom:6px; font-weight: bold">{{card.likes}}</p>
         </div>
       </div>
     </div>

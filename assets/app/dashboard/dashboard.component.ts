@@ -19,4 +19,9 @@ export class DashboardComponent implements OnInit {
     //this.usersService.getAllCards();
   }
 
+  setPublic(id:string, index: number) {
+    this.usersService.toggleCardPublic(id);
+    this.currentUserCards[index].isPublic = !this.currentUserCards[index].isPublic;
+    console.log('ispub', this.currentUserCards[index].isPublic);
+  }
 }

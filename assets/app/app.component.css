@@ -1,3 +1,22 @@
 .headline {
   margin-top: 100px;
 }
+
+.sky {
+  background: linear-gradient(#060b44,#793a3b);
+  height: 800px;
+}
+
+.sparkle {
+  animation-name: sparkle;
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-delay:
+}
+
+@keyframes sparkle {
+    20% {
+      transform: scale(0.5);
+      opacity: 0.5;
+    }
+  }

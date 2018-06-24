@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../services/users.service';
-import { Card } from '../models/card.model'
+import { Card } from '../models/card.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-browser',
@@ -10,13 +11,35 @@ import { Card } from '../models/card.model'
 export class BrowserComponent implements OnInit {
   recentUserCards:Array<Card>;
 
-  constructor(private usersService:UsersService) { }
+  constructor(private usersService:UsersService, private http:HttpClient) { }
 
   ngOnInit() {
     this.usersService.recentCards.subscribe((newcards) => {
       this.recentUserCards = newcards;
     });
     this.usersService.getAllCards();
+  }
+
+  getLikes(id) {
+    return this.usersService.likedCards.includes(id);
+  }
+
+  likeSnapCard(id, index) {
+    this.http
+      .post('like-snapcard', JSON.stringify({
+        id,
+        email: this.usersService.currentEmail,
+      }), {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+      }).subscribe(data => {
+        if (data) {
+          this.recentUserCards[index].likes = data.card.likes;
+          this.usersService.likeCard(id);
+        }
+
+      });
   }
 
 }

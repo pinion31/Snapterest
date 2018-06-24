@@ -18,6 +18,10 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [{ loader: 'raw-loader' }]
+            },
+            {
+                test: /\.svg$/,
+                loader: 'file-loader' // 👈 Add loader
             }
         ],
         exprContextCritical: false

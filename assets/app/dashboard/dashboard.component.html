@@ -5,12 +5,22 @@
     </div>
   </div>
   <div class="container">
-    <div *ngFor="let card of currentUserCards">
+    <div *ngFor="let card of currentUserCards; let num=index">
       <div class="card" style="width: 13rem; min-height: 250px; max-height: 250px;">
         <img *ngIf="card.imageLink" class="card-img-top" style="max-height:150px; max-width:150px; margin: 10px auto"src="{{card.imageLink}}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">{{card.title}}</h5>
           <p class="card-text">{{card.description}}</p>
+          <div class="toggle">
+            <label class="switch">
+              <input type="checkbox" [checked]="card.isPublic" (click)="setPublic(card.id,num)">
+              <span class="slider round"></span>
+            </label>
+            <span class="public">Public</span>
+          </div>
+          <img class="likeThumb" src="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/svgs/fi-like.svg" alt="star" >
+          <p class="card-text like" style="position: absolute; left:181px; bottom:6px; font-weight: bold">{{card.likes}}
+          </p>
         </div>
       </div>
     </div>
