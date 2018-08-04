@@ -28,7 +28,6 @@ export class ModalBasicComponent implements OnInit  {
 
   onSubmit() {
     this.usersService.addNewCard(this.cardForm.value);
-    console.log('form', this.cardForm);
   }
 
   private getDismissReason(reason: any): string {

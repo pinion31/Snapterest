@@ -10,7 +10,7 @@
 
 .like {
   position: absolute;
-  left:147px;
+  left:125px;
   top:226px;
   padding-bottom: 0px;
   margin-bottom: 0px;
@@ -39,8 +39,7 @@
 
 .likedThumb {
   width: 25px;
-  position:
-  absolute;
+  position:absolute;
   top:220px;
   left:64px;
   transform: scaleX(-1);

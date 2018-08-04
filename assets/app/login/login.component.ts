@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UsersService } from '../services/users.service';
 
@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
   loginForm:FormGroup;
   errorMessage:string;
 
-  constructor(private userService:UsersService) {
+  constructor(private userService:UsersService, private zone: NgZone) {
     this.loginForm = new FormGroup({
       email: new FormControl(null, Validators.required),
       password: new FormControl(null, Validators.required),

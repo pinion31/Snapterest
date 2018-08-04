@@ -14,6 +14,7 @@ export class UsersService {
   userCards:Array<Card> = [];
   likedCards:Array<string> = [];
   recentCards:Subject<Array> = new Subject<Array>();
+  stars:Number = 0;
 
   constructor(private http:HttpClient, private router:Router) {
 
@@ -24,6 +25,7 @@ export class UsersService {
   }
 
   getCurrentUser():string {
+    console.log('this currentuser', this.currentUser));
     return this.currentUser;
   }
 
@@ -34,6 +36,14 @@ export class UsersService {
 
   getRecentCards():Observable<Array> {
     return this.recentCards;
+  }
+
+  getStars() {
+    return this.stars;
+  }
+
+  addStars() {
+    this.stars++;
   }
 
   logOut() {
@@ -60,14 +70,14 @@ export class UsersService {
           const cardModels = [];
 
           cards.map(card => {
-            cardModels.push(new Card(card.title, card.imageLink, card.description, card.likes, card.id, card.isPublic));
+            cardModels.push(new Card(card.title, card.imagelink, card.description, card.likes, card.id, card.isPublic));
           });
+
           this.loggedIn.next(true);
           this.currentUser = username;
           this.currentEmail = email;
           this.userCards = cardModels;
-          this.likedCards = cardsLiked;
-
+          this.likedCards = cardsLiked || [];
           this.router.navigateByUrl('/welcome');
         } else {
           //invalid username or password
@@ -96,7 +106,6 @@ export class UsersService {
 
   likeCard(id:string):void {
     this.likedCards.push(id);
-    console.log('this.likeCards', this.likedCards);
   }
 
   addNewUser(user:Object):void {
@@ -126,7 +135,7 @@ export class UsersService {
         const allCards:Array<Card> = [];
 
         returnedCards.all.map(card => {
-          allCards.push(new Card(card.title, card.imageLink, card.description, card.likes, card.id, card.isPublic));
+          allCards.push(new Card(card.title, card.imagelink, card.description, card.likes, card.id, card.ispublic));
         });
         this.recentCards.next(allCards);
       });
@@ -147,7 +156,6 @@ export class UsersService {
                 card.isPublic = isPublic;
               }
             });
-            console.log('recentCards', this.recentCards);
             this.recentCards = updatedCards;
         });
   }

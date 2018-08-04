@@ -27,6 +27,7 @@ export class RegisterComponent implements OnInit {
   onSubmit() {
     if (this.registerForm.valid) {
       this.usersService.addNewUser(this.registerForm.value);
+      this.router.navigateByUrl('/');
     } else {
       console.log('invalid form');
     }

@@ -13,6 +13,7 @@ import { UsersService } from './services/users.service';
 import { ModalBasicComponent } from './modal-basic/modal-basic.component';
 import {NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { BrowserComponent } from './browser/browser.component';
+import { StarGroupComponent } from './star-group/star-group.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent},
@@ -31,6 +32,7 @@ const routes: Routes = [
     DashboardComponent,
     ModalBasicComponent,
     BrowserComponent,
+    StarGroupComponent,
   ],
   imports: [
     BrowserModule,

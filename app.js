@@ -11,9 +11,9 @@ var appRoutes = require('./routes/app');
 
 const app = express();
 app.use(compression());
-mongoose.connect('mongodb://localhost/local');
+//mongoose.connect('mongodb://localhost/local');
 //mongoose.connect(process.env.MONGOLAB_URI);
-mongoose.Promise = global.Promise;
+//mongoose.Promise = global.Promise;
 
 
 // view engine setup

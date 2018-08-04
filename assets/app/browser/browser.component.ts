@@ -16,11 +16,13 @@ export class BrowserComponent implements OnInit {
   ngOnInit() {
     this.usersService.recentCards.subscribe((newcards) => {
       this.recentUserCards = newcards;
+      console.log('this.recentUserCards', this.recentUserCards);
     });
     this.usersService.getAllCards();
   }
 
   getLikes(id) {
+    console.log('this.usersService.likedCards', this.usersService.likedCards);
     return this.usersService.likedCards.includes(id);
   }
 
