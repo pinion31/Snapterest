@@ -11,10 +11,6 @@ var appRoutes = require('./routes/app');
 
 const app = express();
 app.use(compression());
-//mongoose.connect('mongodb://localhost/local');
-//mongoose.connect(process.env.MONGOLAB_URI);
-//mongoose.Promise = global.Promise;
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,6 +33,9 @@ app.use(function(req, res, next) {
 
 app.use('/', appRoutes);
 
+app.get('*', function(req, res) {
+  res.render('index'); // load the single view file (angular will handle the page changes on the front-end)
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   res.render('index');
