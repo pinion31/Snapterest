@@ -9,7 +9,7 @@ import { Card } from '../models/card.model';
 export class UsersService {
   currentUser: string;
   currentEmail: string;
-  errorMessage:Object<any> = {error:''},
+  errorMessage:Object<any> = {error:''};
   loggedIn:Subject<boolean> = new Subject<boolean>();
   userCards:Array<Card> = [];
   likedCards:Array<string> = [];
@@ -25,7 +25,6 @@ export class UsersService {
   }
 
   getCurrentUser():string {
-    console.log('this currentuser', this.currentUser));
     return this.currentUser;
   }
 

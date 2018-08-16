@@ -13,7 +13,13 @@ module.exports = {
         rules: [
             {
                 test: /\.html$/,
-                use: [{ loader: 'html-loader' }]
+                exclude: [/node_modules/, require.resolve('./index.html')],
+                use: {
+                    loader: 'file-loader',
+                    query: {
+                        name: '[name].[ext]'
+                    },
+                },
             },
             {
                 test: /\.css$/,
