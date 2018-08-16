@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Card } from '../models/card.model';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,7 @@ export class UsersService {
   loggedIn:Subject<boolean> = new Subject<boolean>();
   userCards:Array<Card> = [];
   likedCards:Array<string> = [];
-  recentCards:Subject<Array<String>> = new Subject<Array<String>>();
+  recentCards:Subject<Array<any>> = new Subject<Array<any>>();
   stars = 0;
 
   constructor(private http:HttpClient, private router:Router) {
@@ -63,7 +64,7 @@ export class UsersService {
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
         })
-      }).subscribe(result => { /*
+      }).subscribe((result:any) => {
         if (result.user) {
           const { username, email, cards, cardsLiked } = result.user;
           const cardModels = [];
@@ -80,8 +81,8 @@ export class UsersService {
           this.router.navigateByUrl('/welcome');
         } else {
           //invalid username or password
-          //this.errorMessage.error = result.error; //temp
-        }*/
+          this.errorMessage.error = result.error;
+        }
       });
   }
 
@@ -97,9 +98,9 @@ export class UsersService {
           headers: new HttpHeaders({
             'Content-Type': 'application/json'
           })
-        }).subscribe(data => {
-           /* const { title, description, imageLink, id } = data;
-            this.userCards.push(new Card(title, imageLink, description, 0, id));*/
+        }).subscribe((data:any) => {
+            const { title, description, imageLink, id } = data;
+            this.userCards.push(new Card(title, imageLink, description, 0, id));
         });
   }
 
@@ -107,8 +108,8 @@ export class UsersService {
     this.likedCards.push(id);
   }
 
-  addNewUser(user:Object):void {
-   /* const {username, password, email, state, city } = user;
+  addNewUser(user:any):void {
+    const {username, password, email, state, city } = user;
     this.http
         .post('/add-user', JSON.stringify({
           username,
@@ -120,23 +121,23 @@ export class UsersService {
           headers: new HttpHeaders({
             'Content-Type': 'application/json'
           })
-        }).subscribe(data => {
+        }).subscribe((data:any) => {
             const { username, email, state, city, password } = data;
             this.currentUser = username;
-        });*/
+        });
   }
 
   // get recent cards from all users
   getAllCards():void {
     this.http
       .get(`/recent-cards/${this.currentEmail}`)
-      .subscribe(returnedCards => {
-        /*const allCards:Array<Card> = [];
+      .subscribe((returnedCards:any) => {
+        const allCards:Array<Card> = [];
 
         returnedCards.all.map(card => {
           allCards.push(new Card(card.title, card.imagelink, card.description, card.likes, card.id, card.ispublic));
         });
-        this.recentCards.next(allCards);*/
+        this.recentCards.next(allCards);
       });
   }
 
@@ -148,8 +149,11 @@ export class UsersService {
           headers: new HttpHeaders({
             'Content-Type': 'application/json'
           })
-        }).subscribe(data => {
-           /* const { isPublic } = data;
+        }).subscribe((data:any) => {
+            const { isPublic } = data;
+            console.log('this.recentCards', this.recentCards);
+            console.log('typeof this.recentCards', typeof this.recentCards);
+            /*
             const updatedCards = this.recentCards.map(card => {
               if (card.is === id) {
                 card.isPublic = isPublic;

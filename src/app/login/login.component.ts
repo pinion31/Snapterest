@@ -10,7 +10,7 @@ import { UsersService } from '../services/users.service';
 })
 export class LoginComponent implements OnInit {
   loginForm:FormGroup;
-  errorMessage:string;
+  errorMessage:Object;
 
   constructor(private userService:UsersService, private zone: NgZone) {
     this.loginForm = new FormGroup({
@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.errorMessage = this.userService.getErrorMessage(); //temp
+    this.errorMessage = this.userService.getErrorMessage();
   }
 
   onSubmit() {

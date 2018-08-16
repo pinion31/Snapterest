@@ -7,13 +7,13 @@ import { UsersService } from '../services/users.service';
   styleUrls: ['./main-nav-bar.component.css']
 })
 export class MainNavBarComponent implements OnInit {
-  loggedIn:false;
+  loggedIn:Boolean;
 
   constructor(private usersService:UsersService) { }
 
   ngOnInit() {
     this.usersService.loggedIn.subscribe(value => {
-      //this.loggedIn = value; //temp
+      this.loggedIn = value;
     });
   }
 
