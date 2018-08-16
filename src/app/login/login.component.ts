@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.errorMessage = this.userService.getErrorMessage();
+    //this.errorMessage = this.userService.getErrorMessage(); //temp
   }
 
   onSubmit() {

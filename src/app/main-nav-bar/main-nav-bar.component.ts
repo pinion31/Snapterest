@@ -13,7 +13,7 @@ export class MainNavBarComponent implements OnInit {
 
   ngOnInit() {
     this.usersService.loggedIn.subscribe(value => {
-      this.loggedIn = value;
+      //this.loggedIn = value; //temp
     });
   }
 

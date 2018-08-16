@@ -15,8 +15,7 @@ export class BrowserComponent implements OnInit {
 
   ngOnInit() {
     this.usersService.recentCards.subscribe((newcards) => {
-      this.recentUserCards = newcards;
-      console.log('this.recentUserCards', this.recentUserCards);
+      //this.recentUserCards = newcards;
     });
     this.usersService.getAllCards();
   }
@@ -37,7 +36,7 @@ export class BrowserComponent implements OnInit {
       })
       }).subscribe(data => {
         if (data) {
-          this.recentUserCards[index].likes = data.card.likes;
+         // this.recentUserCards[index].likes = data.card.likes; //temp
           this.usersService.likeCard(id);
         }
 
