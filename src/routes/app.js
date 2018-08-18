@@ -122,7 +122,6 @@ router.post('/add-user', (req,res, next) => {
 
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(strippedPassword, salt, (err, hash) => {
-        console.log('hash', hash);
         pool.query(
           'INSERT INTO users VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
           [usernameLowercase, hash, email.toLowerCase(), city, state, []],
