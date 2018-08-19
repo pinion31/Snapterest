@@ -47,7 +47,6 @@ passport.use(new LocalStrategy(
           (error, results2) => {
             if (err) { throw err; }
             user.cards = results2.rows;
-            console.log('this user cards', user.cards);
            return done(null, user);
           }
         )
@@ -151,7 +150,6 @@ router.get('/recent-cards/:id', (req,res) => {
   pool.query('SELECT * FROM cards WHERE isPublic = true AND owner != $1',
   [req.params.id],
   (err, results) => {
-    console.log('rows', results.rows);
     res.status(200).json({all: results.rows});
   });
 });

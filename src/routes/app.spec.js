@@ -79,6 +79,32 @@ describe('/POST login', () => {
         done();
       });
   });
+
+  it('returns "Incorrect username." if sent invalid username', (done) => {
+    request(server)
+      .post('/login')
+      .timeout(5000)
+      .send({username:'nicole@gmail.com', password: 'test'})
+      .expect(200)
+      .end((err, res) => {
+        if (err) {throw err}
+        expect(res.body.error).to.eql("Incorrect username");
+        done();
+      });
+  });
+
+  it('returns "Incorrect password." if sent invalid username', (done) => {
+    request(server)
+      .post('/login')
+      .timeout(5000)
+      .send({username:'chrislogin@gmail.com', password: 'test1'})
+      .expect(200)
+      .end((err, res) => {
+        if (err) {throw err}
+        expect(res.body.error).to.eql("Incorrect password.");
+        done();
+      });
+  });
 });
 
 describe('/POST add-card', () => {
@@ -135,5 +161,131 @@ describe('/POST add-card', () => {
             });
         }
       );
+  });
+});
+
+describe('/POST like-snapcard and /POST toggle-card-public', () => {
+  const id = uuidv1();
+  beforeEach(function(done) {
+    this.timeout(5000);
+    pool.query(
+      'INSERT INTO cards VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+      [ id,
+        'https://www.google.com/link/tomato.jpg',
+        'chrislogin@gmail.com',
+        'Tomato',
+        'This is also  tomato',
+        0,
+        false
+      ],
+      (err, response) => {
+        if (err) { throw err}
+        done();
+      }
+    );
+  });
+
+  it('likes a snapcard', (done) => {
+    request(server)
+      .post('/like-snapcard')
+      .send({ id })
+      .timeout(5000)
+      .expect(200)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.card.likes).to.eql(1);
+        done();
+      });
+  });
+
+  it('makes a card public', (done) => {
+    request(server)
+      .post('/toggle-card-public')
+      .send({ id })
+      .timeout(5000)
+      .expect(200)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.card.ispublic).to.eql(true);
+        done();
+      });
+  });
+});
+
+describe('/GET recent-cards/:id ', () => {
+  beforeEach(function(done) {
+    this.timeout(5000);
+    pool.query(
+      'INSERT INTO cards VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+      [ uuidv1(),
+        'https://www.google.com/link/tomato.jpg',
+        'chris@gmail.com',
+        'Tomato',
+        'This is also  tomato',
+        0,
+        true
+      ],
+      (err, response) => {
+        if (err) { throw err}
+        pool.query(
+          'INSERT INTO cards VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+          [ uuidv1(),
+            'https://www.google.com/link/lots-of-catnip.jpg',
+            'lucy@gmail.com',
+            'Catnip',
+            'I love catnip',
+            0,
+            true
+          ],
+          (err, response) => {
+            if (err) { throw err}
+            pool.query(
+              'INSERT INTO cards VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+              [ uuidv1(),
+                'https://www.google.com/link/lots-of-wetfood.jpg',
+                'unknown@gmail.com',
+                'Chicken and Rice',
+                'I love wet food',
+                0,
+                false
+              ],
+              (err, response) => {
+                if (err) { throw err}
+                done();
+              }
+            );
+          }
+        );
+      }
+    );
+  });
+
+
+  it('gets all recent cards not owned by owner@gmail.com', (done) => {
+    const id = 'unknown@gmail.com';
+    request(server)
+      .get('/recent-cards/'+ id)
+      .timeout(5000)
+      .expect(200)
+      .end((err,res) => {
+        if (err) { throw err}
+        expect(res.body.all.length).to.eql(2); //retrieves both cards
+        done();
+
+      })
+  });
+
+  it('gets only cards not owned by existing user, chris@gmail.com', (done) => {
+    const id = 'chris@gmail.com';
+    request(server)
+      .get('/recent-cards/'+ id)
+      .timeout(5000)
+      .expect(200)
+      .end((err,res) => {
+        if (err) { throw err}
+        expect(res.body.all.length).to.eql(1); //retrieves only one card
+        done();
+
+      })
   });
 });
