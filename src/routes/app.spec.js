@@ -17,25 +17,40 @@ let server;
 beforeEach(function(done){
   this.timeout(5000);
   server = require('../../server.js');
-  pool.query('TRUNCATE users CASCADE');
+
   pool.query('TRUNCATE cards CASCADE');
 
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash('test', salt, (err, hash) => {
-      pool.query(
-        'INSERT INTO users VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
-        ['ChrisLogin', hash, 'chrislogin@gmail.com', 'Manor', 'TX', []],
-        (err, response) => {
-          if (err) {console.log('err', err); return next(err) }
-          done();
-        }
-      );
+  pool.query('TRUNCATE users CASCADE', [], (error, resp) => {
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash('test', salt, (err, hash) => {
+        pool.query(
+          'INSERT INTO users VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+          ['ChrisLogin', hash, 'chrislogin@gmail.com', 'Manor', 'TX', []],
+          (err, response) => {
+            if (err) { throw err}
+            bcrypt.genSalt(10, (err, salt) => {
+              bcrypt.hash('test', salt, (err, hash2) => {
+                pool.query(
+                  'INSERT INTO users VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+                  ['Nicole Cantu', hash2, 'nicole@gmail.com', 'Austin', 'TX', []],
+                  (err, response) => {
+                    if (err) {console.log('err', err); return next(err) }
+                    done();
+                  }
+                );
+              });
+            });
+          }
+        );
+      });
     });
   });
+
 });
 
+/*************************************/
+
 describe('/POST add-user', () => {
-//const {username, password, email, city, state } = req.body;
   it('adds a new user', function() {
       this.timeout(5000);
       request(server)
@@ -47,17 +62,146 @@ describe('/POST add-user', () => {
           if (err) {throw err}
           const { username, email, city, state,cardsliked } = res.body;
           expect(res.status).to.eql(200);
-          //console.log('res.body', res.body);
-          //console.log('res.body.user', res.body.user);
           expect(username).to.eql('chris');
           expect(email).to.eql('chris@gmail.com');
           expect(city).to.eql('Manor');
           expect(state).to.eql('TX');
           expect(cardsliked.length).to.eql(0);
         });
+  });
 
-    });
+  it('handles error if attempting to add an existing user', function(done) {
+      this.timeout(5000);
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash('test', salt, (err, hash) => {
+          pool.query(
+            'INSERT INTO users VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+            ['ChrisDuplicate1', hash, 'duplicate@gmail.com', 'Manor', 'TX', []],
+            (err, response) => {
+              if (err) { throw err }
+              request(server)
+                .post('/add-user')
+                .timeout(5000)
+                .send({username:'ChrisDuplicate1', password:'test', email:'duplicate@gmail.com', city:'Manor', state:'TX' })
+                .expect(400)
+                .end((err,res) => {
+                  if (err) {throw err}
+                  expect(res.body.message).to.eql('User Already Exists.');
+                  done();
+                });
+            }
+          );
+          });
+      });
+
+  });
+
+  it('handles error if attempting to add a new user and missing username', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({password:'test', email:'chris2@gmail.com', city:'Manor', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user and missing password', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'Chris', email:'chris@gmail.com', city:'Manor', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user and missing email', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'Chris', password:'test', city:'Manor', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user and missing city', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'Chris', password:'test', email:'chris@gmail.com', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user and missing state', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'Chris', password:'test', email:'chris@gmail.com', city:'Manor' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user with falsey email', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'Chris', password:'test', email:'', city:'Manor', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user with falsey username', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'', password:'test', email:'chris@gmail.com', city:'Manor', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
+
+  it('handles error if attempting to add a new user with falsey password', function() {
+      this.timeout(5000);
+      request(server)
+        .post('/add-user')
+        .timeout(5000)
+        .send({username:'Chris', password:'', email:'chris@gmail.com', city:'Manor', state:'TX' })
+        .expect(400)
+        .end((err,res) => {
+          if (err) {throw err}
+          expect(res.body.message).to.eql('Missing user information');
+        });
+  });
 });
+
+/*************************************/
 
 describe('/POST login', () => {
   it('logs in a user', (done) => {
@@ -80,20 +224,20 @@ describe('/POST login', () => {
       });
   });
 
-  it('returns "Incorrect username." if sent invalid username', (done) => {
+  it('returns "Incorrect username/password." if sent invalid username', (done) => {
     request(server)
       .post('/login')
       .timeout(5000)
-      .send({username:'nicole@gmail.com', password: 'test'})
+      .send({username:'nicole1@gmail.com', password: 'test'})
       .expect(200)
       .end((err, res) => {
         if (err) {throw err}
-        expect(res.body.error).to.eql("Incorrect username");
+        expect(res.body.error).to.eql("Incorrect username/password.");
         done();
       });
   });
 
-  it('returns "Incorrect password." if sent invalid username', (done) => {
+  it('returns "Incorrect username/password." if sent invalid username', (done) => {
     request(server)
       .post('/login')
       .timeout(5000)
@@ -101,11 +245,39 @@ describe('/POST login', () => {
       .expect(200)
       .end((err, res) => {
         if (err) {throw err}
-        expect(res.body.error).to.eql("Incorrect password.");
+        expect(res.body.error).to.eql("Incorrect username/password.");
+        done();
+      });
+  });
+
+  it('returns "Incorrect username/password." if sent creds without username', (done) => {
+    request(server)
+      .post('/login')
+      .timeout(5000)
+      .send({username:'', password: 'test'})
+      .expect(200)
+      .end((err, res) => {
+        if (err) {throw err}
+        expect(res.body.error).to.eql("Missing credentials");
+        done();
+      });
+  });
+
+  it('returns "Incorrect username/password." if sent creds without password', (done) => {
+    request(server)
+      .post('/login')
+      .timeout(5000)
+      .send({username:'chrislogin@gmail.com', password: ''})
+      .expect(200)
+      .end((err, res) => {
+        if (err) {throw err}
+        expect(res.body.error).to.eql("Missing credentials");
         done();
       });
   });
 });
+
+/*************************************/
 
 describe('/POST add-card', () => {
   it('adds a card', (done) => {
@@ -121,6 +293,92 @@ describe('/POST add-card', () => {
         expect(title).to.eql('Tomato');
         expect(owner).to.eql('chrislogin@gmail.com');
         expect(description).to.eql('This is a tomato');
+        done();
+      })
+  });
+
+  it('handles error if adding card without title', (done) => {
+    request(server)
+      .post('/add-card')
+      .timeout(5000)
+      .send({
+        imageLink:'https://www.google.com/link/tomato.jpg',
+        owner: 'chrislogin@gmail.com',
+        description: 'This is a tomato'
+      })
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing Card Information');
+        done();
+      })
+  });
+
+  it('handles error if adding card without imagelink', (done) => {
+    request(server)
+      .post('/add-card')
+      .timeout(5000)
+      .send({
+        title: 'Tomato',
+        owner: 'chrislogin@gmail.com',
+        description: 'This is a tomato'
+      })
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing Card Information');
+        done();
+      })
+  });
+
+  it('handles error if adding card without description', (done) => {
+    request(server)
+      .post('/add-card')
+      .timeout(5000)
+      .send({
+        imageLink:'https://www.google.com/link/tomato.jpg',
+        title: 'Tomato',
+        owner: 'chrislogin@gmail.com',
+      })
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing Card Information');
+        done();
+      })
+  });
+
+  it('handles error if adding card without owner', (done) => {
+    request(server)
+      .post('/add-card')
+      .timeout(5000)
+      .send({
+        imageLink:'https://www.google.com/link/tomato.jpg',
+        title: 'Tomato',
+        description: 'This is a tomato'
+      })
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing Card Information');
+        done();
+      })
+  });
+
+  it('handles error if adding card with falsey owner', (done) => {
+    request(server)
+      .post('/add-card')
+      .timeout(5000)
+      .send({
+        imageLink:'https://www.google.com/link/tomato.jpg',
+        title: 'Tomato',
+        owner: '',
+        description: 'This is a tomato'
+      })
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing Card Information');
         done();
       })
   });
@@ -164,6 +422,8 @@ describe('/POST add-card', () => {
   });
 });
 
+/*************************************/
+
 describe('/POST like-snapcard and /POST toggle-card-public', () => {
   const id = uuidv1();
   beforeEach(function(done) {
@@ -188,12 +448,64 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('likes a snapcard', (done) => {
     request(server)
       .post('/like-snapcard')
-      .send({ id })
+      .send({ id, email: 'nicole@gmail.com' })
       .timeout(5000)
       .expect(200)
       .end((err,res) => {
         if (err) {throw err}
         expect(res.body.card.likes).to.eql(1);
+        done();
+      });
+  });
+
+  it('handles error if send like-snapcard request with invalid id', (done) => {
+    request(server)
+      .post('/like-snapcard')
+      .send({ id:'invalid id', email: 'nicole@gmail.com' })
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Cannot locate card.');
+        done();
+      });
+  });
+
+  it('handles error if send like-snapcard request with invalid email', (done) => {
+    request(server)
+      .post('/like-snapcard')
+      .send({ id, email:'invalid email' })
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing valid information');
+        done();
+      });
+  });
+
+  it('handles error if send like-snapcard request with no id', (done) => {
+    request(server)
+      .post('/like-snapcard')
+      .send({ email:'invalid email' })
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing information to like card.');
+        done();
+      });
+  });
+
+  it('handles error if send like-snapcard request with falsey id', (done) => {
+    request(server)
+      .post('/like-snapcard')
+      .send({ id:'', email:'nicole@gmail.com' })
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing information to like card.');
         done();
       });
   });
@@ -210,7 +522,47 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
         done();
       });
   });
+
+  it('handles error if attempting to make card public by sending invalid id', (done) => {
+    request(server)
+      .post('/toggle-card-public')
+      .send({ id:'invalid id' })
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Cannot locate card.');
+        done();
+      });
+  });
+
+  it('handles error if attempting to make card public without sending id', (done) => {
+    request(server)
+      .post('/toggle-card-public')
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing information to modify card.');
+        done();
+      });
+  });
+
+  it('handles error if attempting to make card public by sending falsey id', (done) => {
+    request(server)
+      .post('/toggle-card-public')
+      .send({ id:'' })
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) {throw err}
+        expect(res.body.message).to.eql('Missing information to modify card.');
+        done();
+      });
+  });
 });
+
+/*************************************/
 
 describe('/GET recent-cards/:id ', () => {
   beforeEach(function(done) {
@@ -247,7 +599,7 @@ describe('/GET recent-cards/:id ', () => {
                 'Chicken and Rice',
                 'I love wet food',
                 0,
-                false
+                false,
               ],
               (err, response) => {
                 if (err) { throw err}
@@ -284,6 +636,32 @@ describe('/GET recent-cards/:id ', () => {
       .end((err,res) => {
         if (err) { throw err}
         expect(res.body.all.length).to.eql(1); //retrieves only one card
+        done();
+
+      })
+  });
+
+  it('handles error if getting all cards with no id supplied', (done) => {
+    request(server)
+      .get('/recent-cards/')
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) { throw err}
+        expect(res.body.message).to.eql('Missing id');
+        done();
+
+      })
+  });
+
+  it('handles error if getting all cards with falsey id supplied', (done) => {
+    request(server)
+      .get('/recent-cards/ ')
+      .timeout(5000)
+      .expect(400)
+      .end((err,res) => {
+        if (err) { throw err}
+        expect(res.body.message).to.eql('Missing id');
         done();
 
       })
