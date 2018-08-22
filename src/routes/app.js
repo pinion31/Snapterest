@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const router = express.Router();
 const uuidv1 = require('uuid/v1');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const config = require('../../server/config');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const { pool } = require('../config/dbsetup.js')
@@ -83,20 +85,22 @@ router.post('/login', (req,res) => {
     if (info) {
       res.send({ error: info.message });
     } else {
-      res.send({ user });
+      const token = jwt.sign({ id: user.email }, config.secret, {
+        expiresIn: 86400 // expires in 24 hours
+      });
+
+      res.send({ user, token });
     }
   })(req,res);
 });
 
 router.post('/like-snapcard', (req,res) => {
   if (!req.body.id) {
-    res.status(400).json({message: 'Missing information to like card.'});
-    return;
+    return res.status(400).json({message: 'Missing information to like card.'});
   }
 
   if (!req.body.email) {
-    res.status(400).json({ message: 'Missing email'});
-    return;
+    return res.status(400).json({ message: 'Missing email'});
   }
 
   pool.query(
@@ -105,8 +109,7 @@ router.post('/like-snapcard', (req,res) => {
     (err, results) => {
       if (err) { throw err;}
       if (results.rowCount === 0) {
-        res.status(400).json({ message: 'Cannot locate card.'});
-        return;
+        return res.status(400).json({ message: 'Cannot locate card.'});
       }
       pool.query(
       'UPDATE users SET cardsLiked = array_append(cardsLiked, $1) WHERE email = $2 RETURNING *',
@@ -114,8 +117,7 @@ router.post('/like-snapcard', (req,res) => {
       (error, results2) => {
         if (error) { throw error}
         if (results2.rowCount === 0) {
-          res.status(400).json({ message: 'Missing valid information'});
-          return;
+          return res.status(400).json({ message: 'Missing valid information'});
         }
 
         res.status(200).json({card: results.rows[0]});
@@ -131,8 +133,7 @@ router.post('/toggle-card-public', (req,res, next) => {
   const { id } = req.body;
 
   if (!id) {
-    res.status(400).json({ message: 'Missing information to modify card.'});
-    return;
+    return res.status(400).json({ message: 'Missing information to modify card.'});
   }
 
   pool.query(
@@ -141,8 +142,7 @@ router.post('/toggle-card-public', (req,res, next) => {
     (err,results) => {
       if (err) { if (err) { res.json({error: 'Unable to modify card'});}}
       if (results.rowCount === 0) {
-        res.status(400).json({ message: 'Cannot locate card.'});
-        return;
+        return res.status(400).json({ message: 'Cannot locate card.'});
       }
       res.status(200).json({card: results.rows[0]});
     }
@@ -153,8 +153,7 @@ router.post('/add-user', (req,res, next) => {
     const {username, password, email, city, state } = req.body;
 
     if (!username || !password || !email || !city || !state) {
-      res.status(400).json({message: 'Missing user information'});
-      return;
+      return res.status(400).json({message: 'Missing user information'});
     }
 
     const strippedPassword = password.split(' ')[0];
@@ -173,7 +172,10 @@ router.post('/add-user', (req,res, next) => {
                   [usernameLowercase, hash, email.toLowerCase(), city, state, []],
                   (err, response) => {
                     if (err) { throw err; }
-                    res.status(200).json(response.rows[0]);
+                    const token = jwt.sign({ id: email.toLowerCase() }, config.secret, {
+                      expiresIn: 86400 // expires in 24 hours
+                    });
+                    res.status(200).json({token, ...response.rows[0], password: null});
                   }
                 );
               });
@@ -188,8 +190,7 @@ router.post('/add-card', (req,res, next) => {
   const { imageLink, title, owner, description } = req.body;
 
   if (!imageLink || !title || !owner || !description) {
-    res.status(400).json({message: 'Missing Card Information'});
-    return;
+    return res.status(400).json({message: 'Missing Card Information'});
   }
 
   pool.query(
@@ -205,9 +206,7 @@ router.post('/add-card', (req,res, next) => {
 
 router.get('/recent-cards/:id', (req,res) => {
   if (!req.params.id) {
-    console.log('no id');
-    res.status(400).json({message: 'Missing id'});
-    return;
+    return res.status(400).json({message: 'Missing id'});
   }
 
   pool.query('SELECT * FROM cards WHERE isPublic = true AND owner != $1',

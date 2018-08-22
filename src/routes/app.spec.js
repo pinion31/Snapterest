@@ -13,6 +13,8 @@ const testCard = {
   description: 'This is a tomato'
 };
 
+const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNocmlzbG9naW5AZ21haWwuY29tIiwiaWF0IjoxNTM0ODc0OTY2LCJleHAiOjE1MzQ5NjEzNjZ9.mM7-IzEZbyoNZ75NuuKrGeC7_2aWGWbCbL3e87rZ3YA';
+
 let server;
 beforeEach(function(done){
   this.timeout(5000);
@@ -283,6 +285,7 @@ describe('/POST add-card', () => {
   it('adds a card', (done) => {
     request(server)
       .post('/add-card')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .send(testCard)
       .expect(200)
@@ -300,6 +303,7 @@ describe('/POST add-card', () => {
   it('handles error if adding card without title', (done) => {
     request(server)
       .post('/add-card')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .send({
         imageLink:'https://www.google.com/link/tomato.jpg',
@@ -317,6 +321,7 @@ describe('/POST add-card', () => {
   it('handles error if adding card without imagelink', (done) => {
     request(server)
       .post('/add-card')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .send({
         title: 'Tomato',
@@ -334,6 +339,7 @@ describe('/POST add-card', () => {
   it('handles error if adding card without description', (done) => {
     request(server)
       .post('/add-card')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .send({
         imageLink:'https://www.google.com/link/tomato.jpg',
@@ -351,6 +357,7 @@ describe('/POST add-card', () => {
   it('handles error if adding card without owner', (done) => {
     request(server)
       .post('/add-card')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .send({
         imageLink:'https://www.google.com/link/tomato.jpg',
@@ -368,6 +375,7 @@ describe('/POST add-card', () => {
   it('handles error if adding card with falsey owner', (done) => {
     request(server)
       .post('/add-card')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .send({
         imageLink:'https://www.google.com/link/tomato.jpg',
@@ -398,6 +406,7 @@ describe('/POST add-card', () => {
           if (err) { throw err}
           request(server)
             .post('/login')
+            .set('x-access-token', accessToken)
             .timeout(5000)
             .send({
               username:'chrislogin@gmail.com',
@@ -448,6 +457,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('likes a snapcard', (done) => {
     request(server)
       .post('/like-snapcard')
+      .set('x-access-token', accessToken)
       .send({ id, email: 'nicole@gmail.com' })
       .timeout(5000)
       .expect(200)
@@ -461,6 +471,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if send like-snapcard request with invalid id', (done) => {
     request(server)
       .post('/like-snapcard')
+      .set('x-access-token', accessToken)
       .send({ id:'invalid id', email: 'nicole@gmail.com' })
       .timeout(5000)
       .expect(400)
@@ -474,6 +485,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if send like-snapcard request with invalid email', (done) => {
     request(server)
       .post('/like-snapcard')
+      .set('x-access-token', accessToken)
       .send({ id, email:'invalid email' })
       .timeout(5000)
       .expect(400)
@@ -487,6 +499,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if send like-snapcard request with no id', (done) => {
     request(server)
       .post('/like-snapcard')
+      .set('x-access-token', accessToken)
       .send({ email:'invalid email' })
       .timeout(5000)
       .expect(400)
@@ -500,6 +513,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if send like-snapcard request with falsey id', (done) => {
     request(server)
       .post('/like-snapcard')
+      .set('x-access-token', accessToken)
       .send({ id:'', email:'nicole@gmail.com' })
       .timeout(5000)
       .expect(400)
@@ -513,6 +527,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('makes a card public', (done) => {
     request(server)
       .post('/toggle-card-public')
+      .set('x-access-token', accessToken)
       .send({ id })
       .timeout(5000)
       .expect(200)
@@ -526,6 +541,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if attempting to make card public by sending invalid id', (done) => {
     request(server)
       .post('/toggle-card-public')
+      .set('x-access-token', accessToken)
       .send({ id:'invalid id' })
       .timeout(5000)
       .expect(400)
@@ -539,6 +555,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if attempting to make card public without sending id', (done) => {
     request(server)
       .post('/toggle-card-public')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .expect(400)
       .end((err,res) => {
@@ -551,6 +568,7 @@ describe('/POST like-snapcard and /POST toggle-card-public', () => {
   it('handles error if attempting to make card public by sending falsey id', (done) => {
     request(server)
       .post('/toggle-card-public')
+      .set('x-access-token', accessToken)
       .send({ id:'' })
       .timeout(5000)
       .expect(400)
@@ -617,6 +635,7 @@ describe('/GET recent-cards/:id ', () => {
     const id = 'unknown@gmail.com';
     request(server)
       .get('/recent-cards/'+ id)
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .expect(200)
       .end((err,res) => {
@@ -631,6 +650,7 @@ describe('/GET recent-cards/:id ', () => {
     const id = 'chris@gmail.com';
     request(server)
       .get('/recent-cards/'+ id)
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .expect(200)
       .end((err,res) => {
@@ -644,6 +664,7 @@ describe('/GET recent-cards/:id ', () => {
   it('handles error if getting all cards with no id supplied', (done) => {
     request(server)
       .get('/recent-cards/')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .expect(400)
       .end((err,res) => {
@@ -657,6 +678,7 @@ describe('/GET recent-cards/:id ', () => {
   it('handles error if getting all cards with falsey id supplied', (done) => {
     request(server)
       .get('/recent-cards/ ')
+      .set('x-access-token', accessToken)
       .timeout(5000)
       .expect(400)
       .end((err,res) => {

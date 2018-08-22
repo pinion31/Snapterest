@@ -6,7 +6,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 
-var appRoutes = require('./src/routes/app');
+const appRoutes = require('./src/routes/app');
+const requireAuth = require('./server/auth');
 
 const app = express();
 app.use(compression());
@@ -24,7 +25,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/', appRoutes);
+app.use('/', requireAuth, appRoutes);
 
 app.get('/*', function(req,res) {
   res.sendFile(path.join(__dirname+'/dist/sparkle/index.html'));

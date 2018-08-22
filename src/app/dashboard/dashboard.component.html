@@ -6,7 +6,7 @@
   </div>
   <div class="container">
     <div *ngFor="let card of currentUserCards; let num=index">
-      <div class="card" style="width: 13rem; min-height: 250px; max-height: 250px;">
+      <div class="card" style="width: 13rem; min-height: 250px; max-height: 250px; margin: 10px; float: left;">
         <img *ngIf="card.imageLink" class="card-img-top" style="max-height:150px; max-width:150px; margin: 10px auto"src="{{card.imageLink}}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">{{card.title}}</h5>

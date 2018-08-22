@@ -26,13 +26,16 @@ export class BrowserComponent implements OnInit {
   }
 
   likeSnapCard(id, index) {
+    const token = localStorage.getItem('token');
+
     this.http
       .post('like-snapcard', JSON.stringify({
         id,
         email: this.usersService.currentEmail,
       }), {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-access-token': token
       })
       }).subscribe(data => {
         if (data) {

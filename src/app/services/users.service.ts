@@ -66,6 +66,7 @@ export class UsersService {
         })
       }).subscribe((result:any) => {
         if (result.user) {
+          const { token } = result;
           const { username, email, cards, cardsLiked } = result.user;
           const cardModels = [];
 
@@ -73,6 +74,7 @@ export class UsersService {
             cardModels.push(new Card(card.title, card.imagelink, card.description, card.likes, card.id, card.isPublic));
           });
 
+          localStorage.setItem('token', token); // JWT token
           this.loggedIn.next(true);
           this.currentUser = username;
           this.currentEmail = email;
@@ -88,6 +90,7 @@ export class UsersService {
 
   addNewCard(card):void {
      const { title, description, imageLink } = card;
+     const token = localStorage.getItem('token');
      this.http
        .post('/add-card', JSON.stringify({
           imageLink,
@@ -96,7 +99,8 @@ export class UsersService {
           description
        }), {
           headers: new HttpHeaders({
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': token
           })
         }).subscribe((data:any) => {
             const { title, description, imageLink, id } = data;
@@ -119,19 +123,23 @@ export class UsersService {
           email,
         }), {
           headers: new HttpHeaders({
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           })
         }).subscribe((data:any) => {
-            const { username, email, state, city, password } = data;
+            const { username, email, state, city, password, token } = data;
+            localStorage.setItem('token', token); // JWT token
             this.currentUser = username;
         });
   }
 
   // get recent cards from all users
   getAllCards():void {
+    const token = localStorage.getItem('token');
     this.http
-      .get(`/recent-cards/${this.currentEmail}`)
-      .subscribe((returnedCards:any) => {
+      .get(`/recent-cards/${this.currentEmail}`, {
+        headers: new HttpHeaders({
+          'x-access-token': token })
+      }).subscribe((returnedCards:any) => {
         const allCards:Array<Card> = [];
 
         returnedCards.all.map(card => {
@@ -142,12 +150,15 @@ export class UsersService {
   }
 
   toggleCardPublic(id:string) {
+    const token = localStorage.getItem('token');
+
     this.http
       .post('/toggle-card-public', JSON.stringify({
           id
         }), {
           headers: new HttpHeaders({
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-access-token': token
           })
         }).subscribe((data:any) => {
             const { isPublic } = data;
